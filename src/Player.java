@@ -1,3 +1,5 @@
+package src;
+
 import java.util.ArrayList;
 
 public class Player {
@@ -9,5 +11,17 @@ public class Player {
         this.playerID = playerID;
         this.dummies = new ArrayList<Dummy>();
         this.playerTurn = false;
+    }
+
+    public void setPlayerTurn(boolean playerTurn) {
+        this.playerTurn = playerTurn;
+    }
+
+    public boolean getPlayerTurn() {
+        return this.playerTurn;
+    }
+
+    public int getPlayerID() {
+        return this.playerID;
     }
 }

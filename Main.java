@@ -1,5 +1,10 @@
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, World!");
+        new src.Board(800, 800);
+
+        new src.Janech();
+
+        new src.Game();
+
     }
 }

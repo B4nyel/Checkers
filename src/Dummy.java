@@ -1,8 +1,11 @@
+package src;
+
 public class Dummy {
     private int type;
     private Player playerOwner;
     private int positionX;
     private int positionY;
+    private ImageHandler img;
 
     public Dummy(int type, Player playerOwner, int positionX, int positionY) {
         this.type = 1;

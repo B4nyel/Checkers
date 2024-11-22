@@ -24,4 +24,16 @@ public class Player {
     public int getPlayerID() {
         return this.playerID;
     }
+
+    public void addDummy(Dummy dummy) {
+        this.dummies.add(dummy);
+    }
+
+    public void removeDummy(Dummy dummy) {
+        this.dummies.remove(dummy);
+    }
+
+    public ArrayList<Dummy> getDummies() {
+        return this.dummies;
+    }
 }

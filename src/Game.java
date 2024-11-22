@@ -4,18 +4,21 @@ import java.util.Random;
 import fri.shapesge.*;
 
 public class Game {
-    private Dummy dummy;
     private Player player1;
     private Player player2;
-    private ImageHandler img;
-    // private int turn;
+    private ImageHandler imageHandler;
+    private InputHandler inputHandler;
+    private Dummy[][] board;
 
     public Game() {
         this.player1 = new Player(1);
         this.player2 = new Player(2);
-        // this.turn = 1;
+        this.board = new Dummy[8][8];
+        this.imageHandler = new ImageHandler();
+        this.inputHandler = new InputHandler(this);
 
         this.start();
+        this.Test();
     }
 
     public void start() {
@@ -36,12 +39,57 @@ public class Game {
         text.changeFont("Aral", FontStyle.BOLD, 50);
         text.makeVisible();
 
-        Rectangle rectangle = new Rectangle(350, 820);
-        rectangle.changeColor(player1.getPlayerTurn() ? "vanilla" : "brown");
-        rectangle.makeVisible();
+        imageHandler.drawImage("playerTurn", player1.getPlayerTurn() ? "pawnWhite" : "pawnBlack", 280, 820);
 
-        img = new ImageHandler();
-        img.drawImage(player1.getPlayerTurn() ? "pawnWhite" : "pawnBlack", 280, 820);
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if ((i < 3 || i > 4) && (i + j) % 2 != 0) {
+                    if (i < 3) {
+                        Dummy dummy = new Dummy(1, j * 100, i * 100, "pawn", player1);
+                        board[i][j] = dummy;
+                        player1.addDummy(dummy);
+                    } else {
+                        Dummy dummy = new Dummy(1, j * 100, i * 100, "pawn", player2);
+                        board[i][j] = dummy;
+                        player2.addDummy(dummy);
+                    }
+                    board[i][j].drawDummy(board[i][j].getDummyID());
+                }
+            }
+        }
+
+    }
+
+    public void Test() {
+        System.out.println("Player 1 has " + player1.getDummies().size() + " dummies");
+        System.out.println("Player 2 has " + player2.getDummies().size() + " dummies");
+        inputHandler.printBoard();
+    }
+
+    public Dummy getBoardDummy(int x, int y) {
+        if (x >= 0 && x < 8 && y >= 0 && y < 8) {
+            return board[y][x];
+        }
+        return null;
+    }
+
+    public Dummy[][] getBoard() {
+        return this.board;
+    }
+
+    public void removeDummyFromGame(Dummy dummy) {
+        int tileX = dummy.getPositionX() / 100;
+        int tileY = dummy.getPositionY() / 100;
+
+        // Remove the dummy from the board
+        board[tileY][tileX] = null;
+
+        // Remove the dummy from the player's list
+        Player player = dummy.getPlayerOwner();
+        player.removeDummy(dummy); // Remove the dummy from the player's list
+
+        // Remove the image from the screen using ImageHandler
+        dummy.removeDummy(dummy.getDummyID());
     }
 
 }

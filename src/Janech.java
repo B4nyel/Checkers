@@ -4,11 +4,13 @@ import fri.shapesge.*;
 
 public class Janech {
     private ImageHandler imageHandler;
+    private SoundHandler soundHandler;
 
     public Janech() {
         Manager yolo = new Manager();
         yolo.manageObject(this);
         imageHandler = new ImageHandler();
+        soundHandler = new SoundHandler();
     }
 
     public void clickLeft(int x, int y) {
@@ -17,6 +19,7 @@ public class Janech {
         // circle.makeVisible();
 
         imageHandler.drawImage("pawnWhite", x, y);
+        soundHandler.playSound("board.wav");
     }
 
     public void clickRight(int x, int y) {
@@ -25,6 +28,7 @@ public class Janech {
         // square.makeVisible();
 
         imageHandler.drawImage("pawnBlack", x, y);
+        soundHandler.playSound("yipee.wav");
     }
 
     public void clickMiddle(int x, int y) {

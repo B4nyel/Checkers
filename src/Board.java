@@ -6,8 +6,8 @@ public class Board {
     private int width;
     private int tile;
 
-    public Board(int width, int height) {
-        this.width = width;
+    public Board() {
+        this.width = 800;
         this.tile = 100;
 
         this.drawBoard();

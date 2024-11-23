@@ -17,6 +17,7 @@ public class Game {
         this.imageHandler = new ImageHandler();
         this.inputHandler = new InputHandler(this);
 
+        new Board();
         this.start();
         this.Test();
     }

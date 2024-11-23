@@ -37,6 +37,20 @@ public class Dummy {
         return this.dummyID;
     }
 
+    public int getType() {
+        return this.type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+        if (this.type == 2) {
+            imageHandler.removeImage(dummyID);
+            this.dummyID = "queen";
+            imageHandler.drawImage(dummyID, (this.playerOwner.getPlayerID() == 1) ? "queenWhite" : "queenBlack",
+                    this.positionX + 18, this.positionY + 18);
+        }
+    }
+
     public void drawDummy(String dummyID) {
         switch (this.type) {
             case 1:

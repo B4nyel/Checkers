@@ -25,10 +25,10 @@ public class Game {
         int number = new Random().nextInt(2);
 
         switch (number) {
-            case 1:
+            case 0:
                 this.player1.setPlayerTurn(true);
                 break;
-            case 2:
+            case 1:
                 this.player2.setPlayerTurn(true);
                 break;
             default:
@@ -39,7 +39,7 @@ public class Game {
         text.changeFont("Aral", FontStyle.BOLD, 50);
         text.makeVisible();
 
-        imageHandler.drawImage("playerTurn", player1.getPlayerTurn() ? "pawnWhite" : "pawnBlack", 280, 820);
+        drawTurn();
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -81,15 +81,25 @@ public class Game {
         int tileX = dummy.getPositionX() / 100;
         int tileY = dummy.getPositionY() / 100;
 
-        // Remove the dummy from the board
         board[tileY][tileX] = null;
 
-        // Remove the dummy from the player's list
         Player player = dummy.getPlayerOwner();
-        player.removeDummy(dummy); // Remove the dummy from the player's list
+        player.removeDummy(dummy);
 
-        // Remove the image from the screen using ImageHandler
         dummy.removeDummy(dummy.getDummyID());
+    }
+
+    public Player getPlayer1() {
+        return this.player1;
+    }
+
+    public Player getPlayer2() {
+        return this.player2;
+    }
+
+    public void drawTurn() {
+        imageHandler.removeImage("playerTurn");
+        imageHandler.drawImage("playerTurn", player1.getPlayerTurn() ? "pawnWhite" : "pawnBlack", 280, 820);
     }
 
 }

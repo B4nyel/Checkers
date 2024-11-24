@@ -8,7 +8,9 @@ public class Game {
     private Player player2;
     private ImageHandler imageHandler;
     private InputHandler inputHandler;
+    private SoundHandler soundHandler;
     private Dummy[][] board;
+    private Dummy selectedDummy;
 
     public Game() {
         this.player1 = new Player(1);
@@ -16,6 +18,7 @@ public class Game {
         this.board = new Dummy[8][8];
         this.imageHandler = new ImageHandler();
         this.inputHandler = new InputHandler(this);
+        this.soundHandler = new SoundHandler();
 
         new Board();
         this.start();
@@ -103,4 +106,165 @@ public class Game {
         imageHandler.drawImage("playerTurn", player1.getPlayerTurn() ? "pawnWhite" : "pawnBlack", 280, 820);
     }
 
+    public boolean isValidMove(Dummy dummy, int x, int y) {
+        int startX = dummy.getPositionX() / 100;
+        int startY = dummy.getPositionY() / 100;
+
+        if (dummy.getType() == 2) {
+            if (Math.abs(x - startX) == Math.abs(y - startY)) {
+                int stepX = (x - startX) > 0 ? 1 : -1;
+                int stepY = (y - startY) > 0 ? 1 : -1;
+
+                int currentX = startX + stepX;
+                int currentY = startY + stepY;
+                boolean foundEnemy = false;
+
+                while (currentX != x && currentY != y) {
+                    Dummy obstacle = getBoardDummy(currentX, currentY);
+                    if (obstacle != null) {
+                        if (obstacle.getPlayerOwner().getPlayerID() == dummy.getPlayerOwner().getPlayerID()) {
+                            return false;
+                        } else if (obstacle.getPlayerOwner().getPlayerID() != dummy.getPlayerOwner().getPlayerID()) {
+                            Dummy nextTile = getBoardDummy(currentX + stepX, currentY + stepY);
+                            if (nextTile == null) {
+                                foundEnemy = true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+                    currentX += stepX;
+                    currentY += stepY;
+                }
+
+                if (foundEnemy) {
+                    return true;
+                }
+
+                Dummy destinationDummy = getBoardDummy(x, y);
+                if (destinationDummy == null) {
+                    return true;
+                }
+            }
+        } else {
+            if (Math.abs(x - startX) == 1 && Math.abs(y - startY) == 1) {
+                return getBoardDummy(x, y) == null;
+            }
+
+            if (Math.abs(x - startX) == 2 && Math.abs(y - startY) == 2) {
+                int midX = (startX + x) / 2;
+                int midY = (startY + y) / 2;
+
+                Dummy midDummy = getBoardDummy(midX, midY);
+                if (midDummy != null && midDummy.getPlayerOwner().getPlayerID() != dummy.getPlayerOwner().getPlayerID()
+                        && getBoardDummy(x, y) == null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void moveDummy(Dummy dummy, int x, int y) {
+        int oldX = dummy.getPositionX() / 100;
+        int oldY = dummy.getPositionY() / 100;
+
+        if (dummy.getType() == 2) {
+            int stepX = (x - oldX) > 0 ? 1 : -1;
+            int stepY = (y - oldY) > 0 ? 1 : -1;
+
+            int currentX = oldX + stepX;
+            int currentY = oldY + stepY;
+
+            while (currentX != x && currentY != y) {
+                Dummy obstacle = getBoardDummy(currentX, currentY);
+                if (obstacle != null) {
+                    if (obstacle.getPlayerOwner().getPlayerID() != dummy.getPlayerOwner().getPlayerID()) {
+                        board[currentY][currentX] = null;
+                        obstacle.getPlayerOwner().removeDummy(obstacle);
+                        removeDummyFromGame(obstacle);
+                        System.out.println("Enemy dummy removed at: " + currentX + ", " + currentY);
+                    } else {
+                        return;
+                    }
+                }
+                currentX += stepX;
+                currentY += stepY;
+            }
+
+            Dummy destinationDummy = getBoardDummy(x, y);
+            if (destinationDummy != null) {
+                return;
+            }
+        }
+
+        dummy.dummyMove(dummy, x * 100, y * 100);
+
+        board[oldY][oldX] = null;
+        board[y][x] = dummy;
+
+        if ((dummy.getPlayerOwner().getPlayerID() == 1 && y == 7)
+                || (dummy.getPlayerOwner().getPlayerID() == 2 && y == 0)) {
+            dummy.setType(2);
+            soundHandler.playSound("promote.wav");
+            return;
+        }
+
+        soundHandler.playSound("board.wav");
+    }
+
+    public void playerMoveDummy(int x, int y) {
+        int tileX = inputHandler.getTileX(x);
+        int tileY = inputHandler.getTileY(y);
+
+        if (selectedDummy == null) {
+            selectedDummy = getBoardDummy(tileX, tileY);
+
+            if (selectedDummy == null) {
+                System.out.println("Dummy not found at: " + tileX + ", " + tileY);
+                return;
+            }
+
+            if (selectedDummy.getPlayerOwner().getPlayerID() == 1 && !player1.getPlayerTurn()) {
+                System.out.println("Not your turn.");
+                selectedDummy = null;
+                return;
+            } else if (selectedDummy.getPlayerOwner().getPlayerID() == 2 && !player2.getPlayerTurn()) {
+                System.out.println("Not your turn.");
+                selectedDummy = null;
+                return;
+            }
+
+            if (selectedDummy != null) {
+                System.out.println("Piece selected at: " + tileX + ", " + tileY);
+            }
+        } else {
+            if ((tileX + tileY) % 2 == 0) {
+                System.out.println("Invalid move.");
+                return;
+            }
+
+            if (isValidMove(selectedDummy, tileX, tileY)) {
+                moveDummy(selectedDummy, tileX, tileY);
+                selectedDummy = null;
+                System.out.println("Moved piece to: " + tileX + ", " + tileY);
+
+                player1.setPlayerTurn(!player1.getPlayerTurn());
+                player2.setPlayerTurn(!player2.getPlayerTurn());
+
+                drawTurn();
+            } else {
+                System.out.println("Invalid move.");
+            }
+        }
+    }
+
+    public Dummy getSelectedDummy() {
+        return selectedDummy;
+    }
+
+    public void setSelectedDummy(Dummy selectedDummy) {
+        this.selectedDummy = selectedDummy;
+    }
 }

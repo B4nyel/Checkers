@@ -99,4 +99,19 @@ public class Dummy {
     public Player getPlayerOwner() {
         return this.playerOwner;
     }
+
+    public void selectDummy(Dummy dummy) {
+        imageHandler.removeImage(dummy.dummyID);
+        String img = (dummy.getType() == 1) ? "pawnSelected" : "queenSelected";
+        imageHandler.drawImage(dummy.dummyID, img, dummy.positionX + 18, dummy.positionY + 18);
+    }
+
+    public void deselectDummy(Dummy dummy) {
+        imageHandler.removeImage(dummy.dummyID);
+        String img1 = (dummy.getPlayerOwner().getPlayerID() == 1) ? "pawnWhite" : "pawnBlack";
+        String img2 = (dummy.getPlayerOwner().getPlayerID() == 1) ? "queenWhite" : "queenBlack";
+        imageHandler.drawImage(dummy.dummyID, (dummy.getType() == 1) ? img1 : img2, dummy.positionX + 18,
+                dummy.positionY + 18);
+        ;
+    }
 }

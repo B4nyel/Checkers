@@ -260,12 +260,15 @@ public class Game {
                 return;
             }
 
+            selectedDummy.selectDummy(selectedDummy);
+
             if (selectedDummy != null) {
                 System.out.println("Piece selected at: " + tileX + ", " + tileY);
             }
         } else {
             if (selectedDummy == getBoardDummy(tileX, tileY)) {
                 System.out.println("Deselected piece at: " + tileX + ", " + tileY);
+                selectedDummy.deselectDummy(selectedDummy);
                 selectedDummy = null;
                 return;
             }
@@ -276,6 +279,7 @@ public class Game {
             }
 
             if (isValidMove(selectedDummy, tileX, tileY)) {
+                selectedDummy.deselectDummy(selectedDummy);
                 moveDummy(selectedDummy, tileX, tileY);
                 selectedDummy = null;
                 System.out.println("Moved piece to: " + tileX + ", " + tileY);

@@ -1,7 +1,9 @@
 package src;
 
 import java.util.Random;
-import fri.shapesge.*;
+
+import fri.shapesge.TextBlock;
+import fri.shapesge.FontStyle;
 
 public class Game {
     private Player player1;
@@ -11,6 +13,7 @@ public class Game {
     private SoundHandler soundHandler;
     private Dummy[][] board;
     private Dummy selectedDummy;
+    private TextBlock text;
 
     public Game() {
         this.player1 = new Player(1);
@@ -19,13 +22,19 @@ public class Game {
         this.imageHandler = new ImageHandler();
         this.inputHandler = new InputHandler(this);
         this.soundHandler = new SoundHandler();
+        this.selectedDummy = null;
 
         new Board();
         this.start();
         this.Test();
+
+        this.text = new TextBlock("?", 650, 865);
+        this.text.changeFont("Aral", FontStyle.BOLD, 50);
+        this.text.makeVisible();
     }
 
     public void start() {
+        imageHandler.drawImage("ui", "oak", 0, 800);
         int number = new Random().nextInt(2);
 
         switch (number) {
@@ -39,9 +48,13 @@ public class Game {
                 break;
         }
 
-        TextBlock text = new TextBlock("Player turn:", 0, 865);
+        TextBlock text = new TextBlock("Player turn:", 30, 865);
         text.changeFont("Aral", FontStyle.BOLD, 50);
         text.makeVisible();
+
+        TextBlock winner = new TextBlock("Winner:", 450, 865);
+        winner.changeFont("Aral", FontStyle.BOLD, 50);
+        winner.makeVisible();
 
         drawTurn();
 
@@ -103,7 +116,17 @@ public class Game {
 
     public void drawTurn() {
         imageHandler.removeImage("playerTurn");
-        imageHandler.drawImage("playerTurn", player1.getPlayerTurn() ? "pawnWhite" : "pawnBlack", 280, 820);
+        imageHandler.drawImage("playerTurn", player1.getPlayerTurn() ? "pawnWhite" : "pawnBlack", 320, 820);
+    }
+
+    public void drawWinner() {
+        if (player1.getDummies().size() == 0) {
+            this.text.makeInvisible();
+            imageHandler.drawImage("winner", "pawnBlack", 650, 820);
+        } else if (player2.getDummies().size() == 0) {
+            this.text.makeInvisible();
+            imageHandler.drawImage("winner", "pawnWhite", 800, 820);
+        }
     }
 
     public boolean isValidMove(Dummy dummy, int x, int y) {
@@ -288,6 +311,7 @@ public class Game {
                 player2.setPlayerTurn(!player2.getPlayerTurn());
 
                 drawTurn();
+                drawWinner();
             } else {
                 System.out.println("Invalid move.");
             }

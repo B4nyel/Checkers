@@ -110,6 +110,13 @@ public class Game {
         int startX = dummy.getPositionX() / 100;
         int startY = dummy.getPositionY() / 100;
 
+        if (dummy.getType() == 1) {
+            if ((dummy.getPlayerOwner().getPlayerID() == 1 && y <= startY) ||
+                    (dummy.getPlayerOwner().getPlayerID() == 2 && y >= startY)) {
+                return false;
+            }
+        }
+
         if (dummy.getType() == 2) {
             if (Math.abs(x - startX) == Math.abs(y - startY)) {
                 int stepX = (x - startX) > 0 ? 1 : -1;
@@ -197,6 +204,20 @@ public class Game {
             if (destinationDummy != null) {
                 return;
             }
+        } else {
+            if (Math.abs(x - oldX) == 2 && Math.abs(y - oldY) == 2) {
+                int midX = (oldX + x) / 2;
+                int midY = (oldY + y) / 2;
+
+                Dummy midDummy = getBoardDummy(midX, midY);
+                if (midDummy != null
+                        && midDummy.getPlayerOwner().getPlayerID() != dummy.getPlayerOwner().getPlayerID()) {
+                    board[midY][midX] = null;
+                    midDummy.getPlayerOwner().removeDummy(midDummy);
+                    removeDummyFromGame(midDummy);
+                    System.out.println("Enemy dummy removed at: " + midX + ", " + midY);
+                }
+            }
         }
 
         dummy.dummyMove(dummy, x * 100, y * 100);
@@ -206,6 +227,9 @@ public class Game {
 
         if ((dummy.getPlayerOwner().getPlayerID() == 1 && y == 7)
                 || (dummy.getPlayerOwner().getPlayerID() == 2 && y == 0)) {
+            if (dummy.getType() == 2) {
+                return;
+            }
             dummy.setType(2);
             soundHandler.playSound("promote.wav");
             return;
@@ -240,6 +264,12 @@ public class Game {
                 System.out.println("Piece selected at: " + tileX + ", " + tileY);
             }
         } else {
+            if (selectedDummy == getBoardDummy(tileX, tileY)) {
+                System.out.println("Deselected piece at: " + tileX + ", " + tileY);
+                selectedDummy = null;
+                return;
+            }
+
             if ((tileX + tileY) % 2 == 0) {
                 System.out.println("Invalid move.");
                 return;

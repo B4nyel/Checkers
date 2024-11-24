@@ -1,6 +1,6 @@
 package src;
 
-import fri.shapesge.*;
+import fri.shapesge.Manager;
 
 public class InputHandler {
     private Game game;

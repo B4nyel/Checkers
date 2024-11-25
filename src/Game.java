@@ -14,6 +14,7 @@ public class Game {
     private Dummy[][] board;
     private Dummy selectedDummy;
     private TextBlock text;
+    private int gameEnd;
 
     public Game() {
         this.player1 = new Player(1);
@@ -23,6 +24,7 @@ public class Game {
         this.inputHandler = new InputHandler(this);
         this.soundHandler = new SoundHandler();
         this.selectedDummy = null;
+        this.gameEnd = 0;
 
         new Board();
         this.start();
@@ -119,13 +121,25 @@ public class Game {
         imageHandler.drawImage("playerTurn", player1.getPlayerTurn() ? "pawnWhite" : "pawnBlack", 320, 820);
     }
 
-    public void drawWinner() {
+    public void drawWinner(Player player) {
+        if (player.getPlayerID() == 1) {
+            this.text.makeInvisible();
+            soundHandler.playSound("win");
+            imageHandler.drawImage("winner", "pawnBlack", 650, 820);
+        } else if (player.getPlayerID() == 2) {
+            this.text.makeInvisible();
+            soundHandler.playSound("win");
+            imageHandler.drawImage("winner", "pawnWhite", 650, 820);
+        }
+
         if (player1.getDummies().size() == 0) {
             this.text.makeInvisible();
+            soundHandler.playSound("win");
             imageHandler.drawImage("winner", "pawnBlack", 650, 820);
         } else if (player2.getDummies().size() == 0) {
             this.text.makeInvisible();
-            imageHandler.drawImage("winner", "pawnWhite", 800, 820);
+            soundHandler.playSound("win");
+            imageHandler.drawImage("winner", "pawnWhite", 650, 820);
         }
     }
 
@@ -251,17 +265,35 @@ public class Game {
         if ((dummy.getPlayerOwner().getPlayerID() == 1 && y == 7)
                 || (dummy.getPlayerOwner().getPlayerID() == 2 && y == 0)) {
             if (dummy.getType() == 2) {
+                soundHandler.playSound("board");
                 return;
             }
             dummy.setType(2);
-            soundHandler.playSound("promote.wav");
+            soundHandler.playSound("promote");
             return;
         }
 
-        soundHandler.playSound("board.wav");
+        soundHandler.playSound("board");
+    }
+
+    public boolean canPlayerMove(Player player) {
+        for (Dummy dummy : player.getDummies()) {
+            for (int x = 0; x < 8; x++) {
+                for (int y = 0; y < 8; y++) {
+                    if (isValidMove(dummy, x, y)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public void playerMoveDummy(int x, int y) {
+        if (gameEnd == 1) {
+            return;
+        }
+
         int tileX = inputHandler.getTileX(x);
         int tileY = inputHandler.getTileY(y);
 
@@ -311,7 +343,15 @@ public class Game {
                 player2.setPlayerTurn(!player2.getPlayerTurn());
 
                 drawTurn();
-                drawWinner();
+
+                if (!canPlayerMove(player1) || !canPlayerMove(player2)) {
+                    gameEnd = 1;
+                    drawWinner(player1);
+                } else if (!canPlayerMove(player2)) {
+                    gameEnd = 1;
+                    drawWinner(player2);
+                }
+
             } else {
                 System.out.println("Invalid move.");
             }

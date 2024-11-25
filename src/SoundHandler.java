@@ -14,7 +14,7 @@ public class SoundHandler {
 
     public void playSound(String name) {
         try {
-            File soundFile = new File(path + name);
+            File soundFile = new File(path + name + ".wav");
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
             Clip clip = AudioSystem.getClip();
             clip.open(audioStream);

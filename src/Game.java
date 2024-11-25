@@ -294,6 +294,10 @@ public class Game {
             return;
         }
 
+        if (y >= 800) {
+            return;
+        }
+
         int tileX = inputHandler.getTileX(x);
         int tileY = inputHandler.getTileY(y);
 

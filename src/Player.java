@@ -3,13 +3,13 @@ package src;
 import java.util.ArrayList;
 
 public class Player {
-    private ArrayList<Dummy> dummies;
+    private ArrayList<Piece> pieces;
     private int playerID;
     private boolean playerTurn;
 
     public Player(int playerID) {
         this.playerID = playerID;
-        this.dummies = new ArrayList<Dummy>();
+        this.pieces = new ArrayList<Piece>();
         this.playerTurn = false;
     }
 
@@ -25,15 +25,15 @@ public class Player {
         return this.playerID;
     }
 
-    public void addDummy(Dummy dummy) {
-        this.dummies.add(dummy);
+    public void addPiece(Piece piece) {
+        this.pieces.add(piece);
     }
 
-    public void removeDummy(Dummy dummy) {
-        this.dummies.remove(dummy);
+    public void removePiece(Piece piece) {
+        this.pieces.remove(piece);
     }
 
-    public ArrayList<Dummy> getDummies() {
-        return this.dummies;
+    public ArrayList<Piece> getPieces() {
+        return this.pieces;
     }
 }

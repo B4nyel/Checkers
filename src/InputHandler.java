@@ -12,7 +12,7 @@ public class InputHandler {
     }
 
     public void clickLeft(int x, int y) {
-        game.playerMoveDummy(x, y);
+        game.playerMovePiece(x, y);
     }
 
     public int getTileX(int x) {
@@ -30,12 +30,12 @@ public class InputHandler {
     public void clickMiddle(int x, int y) {
         int tileX = getTileX(x);
         int tileY = getTileY(y);
-        Dummy hoverDummy = game.getBoardDummy(tileX, tileY);
-        if (hoverDummy == null) {
+        Piece hoverPiece = game.getBoardPiece(tileX, tileY);
+        if (hoverPiece == null) {
             System.out.println("Dummy not found at: " + tileX + ", " + tileY);
             return;
         }
-        game.removeDummyFromGame(hoverDummy);
+        game.removePieceFromGame(hoverPiece);
     }
 
     public void exit() {
@@ -48,10 +48,10 @@ public class InputHandler {
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                Dummy dummy = game.getBoardDummy(j, i);
+                Piece piece = game.getBoardPiece(j, i);
 
-                if (dummy != null) {
-                    System.out.print("[" + (dummy.getPlayerOwner().getPlayerID()) + ":" + dummy.getDummyID() + "] ");
+                if (piece != null) {
+                    System.out.print("[" + (piece.getPlayerOwner().getPlayerID()) + ":" + piece.getType() + "] ");
                 } else {
                     System.out.print("[empty] ");
                 }

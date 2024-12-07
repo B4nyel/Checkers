@@ -12,14 +12,16 @@ public class ImageHandler {
         this.images = new HashMap<>();
     }
 
-    public void drawImage(String id, String name, int x, int y) {
+    public void drawImage(int type, String name, int x, int y) {
+        String id = (type == 1) ? "pawn" : (type == 2) ? "queen" : (type == 3) ? "gui" : "playerTurn";
         String filePath = this.path + name + ".png";
         Image image = new Image(filePath, x, y);
         image.makeVisible();
         images.put(id, image);
     }
 
-    public void moveImage(String id, int deltaX, int deltaY) {
+    public void moveImage(int type, int deltaX, int deltaY) {
+        String id = (type == 1) ? "pawn" : (type == 2) ? "queen" : (type == 3) ? "gui" : "playerTurn";
         Image image = images.get(id);
         if (image != null) {
             image.changePosition(deltaX, deltaY);
@@ -28,7 +30,8 @@ public class ImageHandler {
         }
     }
 
-    public void removeImage(String id) {
+    public void removeImage(int type) {
+        String id = (type == 1) ? "pawn" : (type == 2) ? "queen" : (type == 3) ? "gui" : "playerTurn";
         Image image = images.get(id);
         if (image != null) {
             image.makeInvisible();

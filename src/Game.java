@@ -9,7 +9,6 @@ public class Game {
     private Player player1;
     private Player player2;
     private ImageHandler imageHandler;
-    private InputHandler inputHandler;
     private SoundHandler soundHandler;
     private Piece[][] board;
     private Piece selectedPiece;
@@ -20,8 +19,8 @@ public class Game {
         this.player1 = new Player(1);
         this.player2 = new Player(2);
         this.board = new Piece[8][8];
+        new InputHandler(this);
         this.imageHandler = new ImageHandler();
-        this.inputHandler = new InputHandler(this);
         this.soundHandler = new SoundHandler();
         this.selectedPiece = null;
         this.gameEnd = false;

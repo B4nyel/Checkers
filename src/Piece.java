@@ -23,11 +23,8 @@ public class Piece {
         return this.positionY;
     }
 
-    public void setPositionX(int positionX) {
+    private void setPosition(int positionX, int positionY) {
         this.positionX = positionX;
-    }
-
-    public void setPositionY(int positionY) {
         this.positionY = positionY;
     }
 
@@ -79,8 +76,7 @@ public class Piece {
 
     public void movePiece(Piece piece, int x, int y) {
         imageHandler.moveImage(piece.type, x + 18, y + 18);
-        piece.setPositionX(x);
-        piece.setPositionY(y);
+        piece.setPosition(x, y);
     }
 
     public Player getPlayerOwner() {

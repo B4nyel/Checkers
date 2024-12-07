@@ -28,14 +28,13 @@ public class Game {
 
         new Board();
         this.start();
-        this.Test();
 
         this.text = new TextBlock("?", 650, 865);
         this.text.changeFont("Aral", FontStyle.BOLD, 50);
         this.text.makeVisible();
     }
 
-    public void start() {
+    private void start() {
         imageHandler.drawImage(3, "oak", 0, 800);
         int number = new Random().nextInt(2);
 
@@ -79,49 +78,24 @@ public class Game {
 
     }
 
-    public void Test() {
-        System.out.println("Player 1 has " + player1.getPieces().size() + " dummies");
-        System.out.println("Player 2 has " + player2.getPieces().size() + " dummies");
-        inputHandler.printBoard();
-    }
-
-    public Piece getBoardPiece(int x, int y) {
-        if (x >= 0 && x < 8 && y >= 0 && y < 8) {
-            return board[y][x];
-        }
-        return null;
-    }
-
-    public Piece[][] getBoard() {
-        return this.board;
-    }
-
-    public void removePieceFromGame(Piece piece) {
-        int tileX = piece.getPositionX() / 100;
-        int tileY = piece.getPositionY() / 100;
-
-        board[tileY][tileX] = null;
-
-        Player player = piece.getPlayerOwner();
-        player.removePiece(piece);
-
-        piece.removePiece(piece.getType());
-    }
-
-    public Player getPlayer1() {
-        return this.player1;
-    }
-
-    public Player getPlayer2() {
-        return this.player2;
-    }
-
-    public void drawTurn() {
+    private void drawTurn() {
         imageHandler.removeImage(4);
         imageHandler.drawImage(4, player1.getPlayerTurn() ? "pawnWhite" : "pawnBlack", 320, 820);
     }
 
-    public void drawWinner(Player player) {
+    private void drawWinner(Player player) {
+        if (player1.getPieces().size() == 0) {
+            this.text.makeInvisible();
+            soundHandler.playSound("win");
+            imageHandler.drawImage(4, "pawnBlack", 650, 820);
+            return;
+        } else if (player2.getPieces().size() == 0) {
+            this.text.makeInvisible();
+            soundHandler.playSound("win");
+            imageHandler.drawImage(4, "pawnWhite", 650, 820);
+            return;
+        }
+
         if (player.getPlayerID() == 1) {
             this.text.makeInvisible();
             soundHandler.playSound("win");
@@ -131,19 +105,13 @@ public class Game {
             soundHandler.playSound("win");
             imageHandler.drawImage(4, "pawnWhite", 650, 820);
         }
-
-        if (player1.getPieces().size() == 0) {
-            this.text.makeInvisible();
-            soundHandler.playSound("win");
-            imageHandler.drawImage(4, "pawnBlack", 650, 820);
-        } else if (player2.getPieces().size() == 0) {
-            this.text.makeInvisible();
-            soundHandler.playSound("win");
-            imageHandler.drawImage(4, "pawnWhite", 650, 820);
-        }
     }
 
-    public boolean isValidMove(Piece piece, int x, int y) {
+    private boolean isValidMove(Piece piece, int x, int y) {
+        if (getBoardPiece(x, y) != null) {
+            return false;
+        }
+
         int startX = piece.getPositionX() / 100;
         int startY = piece.getPositionY() / 100;
 
@@ -210,7 +178,8 @@ public class Game {
         return false;
     }
 
-    public void movePiece(Piece piece, int x, int y) {
+    private void movePiece(Piece piece, int x, int y) {
+
         int oldX = piece.getPositionX() / 100;
         int oldY = piece.getPositionY() / 100;
 
@@ -228,7 +197,6 @@ public class Game {
                         board[currentY][currentX] = null;
                         obstacle.getPlayerOwner().removePiece(obstacle);
                         removePieceFromGame(obstacle);
-                        System.out.println("Enemy dummy removed at: " + currentX + ", " + currentY);
                     } else {
                         return;
                     }
@@ -252,7 +220,6 @@ public class Game {
                     board[midY][midX] = null;
                     midPiece.getPlayerOwner().removePiece(midPiece);
                     removePieceFromGame(midPiece);
-                    System.out.println("Enemy dummy removed at: " + midX + ", " + midY);
                 }
             }
         }
@@ -264,19 +231,17 @@ public class Game {
 
         if ((piece.getPlayerOwner().getPlayerID() == 1 && y == 7)
                 || (piece.getPlayerOwner().getPlayerID() == 2 && y == 0)) {
-            if (piece.getType() == 2) {
-                soundHandler.playSound("board");
+            if (piece.getType() == 1) {
+                piece.promote();
+                soundHandler.playSound("promote");
                 return;
             }
-            piece.promote();
-            soundHandler.playSound("promote");
-            return;
         }
 
         soundHandler.playSound("board");
     }
 
-    public boolean canPlayerMove(Player player) {
+    private boolean canPlayerMove(Player player) {
         for (Piece piece : player.getPieces()) {
             for (int x = 0; x < 8; x++) {
                 for (int y = 0; y < 8; y++) {
@@ -298,42 +263,33 @@ public class Game {
             return;
         }
 
-        int tileX = inputHandler.getTileX(x);
-        int tileY = inputHandler.getTileY(y);
+        int tileX = x / 100;
+        int tileY = y / 100;
 
         if (selectedPiece == null) {
             selectedPiece = getBoardPiece(tileX, tileY);
 
             if (selectedPiece == null) {
-                System.out.println("Dummy not found at: " + tileX + ", " + tileY);
                 return;
             }
 
             if (selectedPiece.getPlayerOwner().getPlayerID() == 1 && !player1.getPlayerTurn()) {
-                System.out.println("Not your turn.");
                 selectedPiece = null;
                 return;
             } else if (selectedPiece.getPlayerOwner().getPlayerID() == 2 && !player2.getPlayerTurn()) {
-                System.out.println("Not your turn.");
                 selectedPiece = null;
                 return;
             }
 
             selectedPiece.selectPiece(selectedPiece);
-
-            if (selectedPiece != null) {
-                System.out.println("Piece selected at: " + tileX + ", " + tileY);
-            }
         } else {
             if (selectedPiece == getBoardPiece(tileX, tileY)) {
-                System.out.println("Deselected piece at: " + tileX + ", " + tileY);
                 selectedPiece.deselectPiece(selectedPiece);
                 selectedPiece = null;
                 return;
             }
 
             if ((tileX + tileY) % 2 == 0) {
-                System.out.println("Invalid move.");
                 return;
             }
 
@@ -341,14 +297,13 @@ public class Game {
                 selectedPiece.deselectPiece(selectedPiece);
                 movePiece(selectedPiece, tileX, tileY);
                 selectedPiece = null;
-                System.out.println("Moved piece to: " + tileX + ", " + tileY);
 
                 player1.setPlayerTurn(!player1.getPlayerTurn());
                 player2.setPlayerTurn(!player2.getPlayerTurn());
 
                 drawTurn();
 
-                if (!canPlayerMove(player1) || !canPlayerMove(player2)) {
+                if (!canPlayerMove(player1)) {
                     gameEnd = true;
                     drawWinner(player1);
                 } else if (!canPlayerMove(player2)) {
@@ -356,17 +311,26 @@ public class Game {
                     drawWinner(player2);
                 }
 
-            } else {
-                System.out.println("Invalid move.");
             }
         }
     }
 
-    public Piece getSelectedPiece() {
-        return selectedPiece;
+    public void removePieceFromGame(Piece piece) {
+        int tileX = piece.getPositionX() / 100;
+        int tileY = piece.getPositionY() / 100;
+
+        board[tileY][tileX] = null;
+
+        Player player = piece.getPlayerOwner();
+        player.removePiece(piece);
+
+        piece.removePiece(piece.getType());
     }
 
-    public void setSelectedPiece(Piece selectedPiece) {
-        this.selectedPiece = selectedPiece;
+    public Piece getBoardPiece(int x, int y) {
+        if (x >= 0 && x < 8 && y >= 0 && y < 8) {
+            return board[y][x];
+        }
+        return null;
     }
 }

@@ -15,21 +15,9 @@ public class InputHandler {
         game.playerMovePiece(x, y);
     }
 
-    public int getTileX(int x) {
-        return x / 100;
-    }
-
-    public int getTileY(int y) {
-        return y / 100;
-    }
-
-    public void clickRight(int x, int y) {
-        printBoard();
-    }
-
     public void clickMiddle(int x, int y) {
-        int tileX = getTileX(x);
-        int tileY = getTileY(y);
+        int tileX = x / 100;
+        int tileY = y / 100;
         Piece hoverPiece = game.getBoardPiece(tileX, tileY);
         if (hoverPiece == null) {
             System.out.println("Dummy not found at: " + tileX + ", " + tileY);
@@ -41,22 +29,5 @@ public class InputHandler {
     public void exit() {
         System.out.println("Exiting the game...");
         System.exit(0);
-    }
-
-    public void printBoard() {
-        System.out.println("Current board state:");
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Piece piece = game.getBoardPiece(j, i);
-
-                if (piece != null) {
-                    System.out.print("[" + (piece.getPlayerOwner().getPlayerID()) + ":" + piece.getType() + "] ");
-                } else {
-                    System.out.print("[empty] ");
-                }
-            }
-            System.out.println();
-        }
     }
 }

@@ -25,8 +25,6 @@ public class ImageHandler {
         Image image = images.get(id);
         if (image != null) {
             image.changePosition(deltaX, deltaY);
-        } else {
-            System.out.println("No image found with ID: " + id);
         }
     }
 
@@ -36,13 +34,6 @@ public class ImageHandler {
         if (image != null) {
             image.makeInvisible();
             images.remove(id);
-            System.out.println("Image removed with ID: " + id);
-        } else {
-            System.out.println("No image found with ID: " + id);
         }
-    }
-
-    public Image getImage(String id) {
-        return images.get(id);
     }
 }

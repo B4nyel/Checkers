@@ -1,27 +1,18 @@
-# Dáma
+# Checkers
 
-Jednoduchá hra **Dáma** pre dvoch hráčov, naprogramovaná v Jave.
+Simple game **Checkers** for two players, coded in java.
 
-## Funkcie
+## Functions
 
-- Hra pre 2 hráčov.
-- Tradičné pravidlá hry Dáma.
-- Intuitívne ovládanie.
+- Game for 2 players
+- Traditional rules of game checkers
+- Easy controls
 
-## Požiadavky
+## Requirements
 
-- Nainštalovaná Java (verzia 8 alebo novšia).
+- Installed java (version 8 or newer).
 
-## Ako spustiť
+## How to run
 
-1. Stiahnite si **jar** súbor projektu.
-2. Dvojkliknite na **jar** súbor.
-3. Hra sa spustí a môžete začať hrať.
-
-## Informácie o projekte
-
-Tento projekt je aktuálne súkromný a slúži na osobné použitie. Nie je open-source a neprijíma príspevky od verejnosti.
-
----
-
-_Keďže ide o privátny projekt, licencia nie je zahrnutá._
+1. Download **jar** file from releases
+2. Double-click the **jar** file
